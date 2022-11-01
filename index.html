@@ -15,6 +15,10 @@
     p {
       white-space: nowrap;
     }
+    .name {
+      font-weight: bold;
+      text-align: left;
+    }
   </style>
 </head>
 
@@ -22,7 +26,7 @@
   <div>
     <table id="weather">
       <tr>
-        <th>Name</th>
+        <th class='name'>Name</th>
         <th>°C</th>
         <th>WG</th>
         <th>Böe</th>
@@ -45,7 +49,7 @@
     for (var i = 0; i < weather_array.length; i++) {
       var row = table.insertRow(-1); // -1 is insert as last
       var cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'title'; //
+      cell.className = 'title name'; //
       cell.innerHTML = weather_array[i]['title']
       cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'LT'; //
