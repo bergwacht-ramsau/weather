@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="refresh" content="300" />
+  <title>Wetter</title>
+  <style>
+    body {
+      font-family: Verdana, sans-serif;
+      font-size: 18px;
+      margin: 0
+    }
+
+    p {
+      white-space: nowrap;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div>
+  <table id="weather">
+                <tr>
+                    <th>Name</th>
+                    <th>Uhrzeit</th>
+                    <th>°C</th>
+                    <th>WG</th>
+                    <th>Böe</th>
+                    <th>HS</th>
+                    <th>HS / 48</th>
+                </tr>
+            </table>
+  </div>
+  <script>
+  var weather_array = [['name', 'date', 'temp', 'wind', 'maxwind', 'snow', 'deltasnow']];
+var columns = ['name', 'date', 'temp', 'wind', 'maxwind', 'snow', 'deltasnow']
+var table = document.getElementById('weather');
+
+for (var i = 0; i < weather_array.length; i++)
+{
+    var row = table.insertRow( -1 ); // -1 is insert as last
+    for( var j = 0; j < columns.length; j++ ){
+        var cell = row.insertCell( - 1 ); // -1 is insert as last
+        cell.className = columns[j]; //
+        cell.innerHTML = weather_array[i][j]
+    }
+}
+
+  </script>
+</body>
+
+</html>
