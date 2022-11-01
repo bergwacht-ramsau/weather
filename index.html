@@ -64,6 +64,9 @@
     }
 
     function roundToFive(x) {
+      if (isNaN(x)){
+        return '-';
+      }
       if (x < 0) {
         return 0;
       }
