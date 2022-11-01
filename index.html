@@ -14,38 +14,61 @@
     p {
       white-space: nowrap;
     }
-
   </style>
 </head>
 
 <body>
   <div>
-  <table id="weather">
-                <tr>
-                    <th>Name</th>
-                    <th>Uhrzeit</th>
-                    <th>°C</th>
-                    <th>WG</th>
-                    <th>Böe</th>
-                    <th>HS</th>
-                    <th>HS / 48</th>
-                </tr>
-            </table>
+    <table id="weather">
+      <tr>
+        <th>Name</th>
+        <th>°C</th>
+        <th>WG</th>
+        <th>Böe</th>
+        <th>HS</th>
+        <th>HS / 48</th>
+      </tr>
+    </table>
   </div>
+  <script src="https://www.salzburg.gv.at/lawine/Station.js"></script>
   <script>
-  var weather_array = [['name', 'date', 'temp', 'wind', 'maxwind', 'snow', 'deltasnow']];
-var columns = ['name', 'date', 'temp', 'wind', 'maxwind', 'snow', 'deltasnow']
-var table = document.getElementById('weather');
+    var weather_array = []
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'kuehroint'))
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'watzmanngrat'))
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'trischuebel'))
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'brunftbergtiefe'))
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'blaueishuette'))
+    weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'hinterberghorn'))
+    var table = document.getElementById('weather');
 
-for (var i = 0; i < weather_array.length; i++)
-{
-    var row = table.insertRow( -1 ); // -1 is insert as last
-    for( var j = 0; j < columns.length; j++ ){
-        var cell = row.insertCell( - 1 ); // -1 is insert as last
-        cell.className = columns[j]; //
-        cell.innerHTML = weather_array[i][j]
+    for (var i = 0; i < weather_array.length; i++) {
+      var row = table.insertRow(-1); // -1 is insert as last
+      var cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'title'; //
+      cell.innerHTML = weather_array[i]['title']
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'LT'; //
+      cell.innerHTML = weather_array[i]['measuredData']['values']['LT']
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'WG'; //
+      cell.innerHTML = Math.round(weather_array[i]['measuredData']['values']['WG'])
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'WG_BOE'; //
+      cell.innerHTML = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'HS'; //
+      cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HS'])
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'HSD48'; //
+      cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HSD48'])
     }
-}
+
+    function roundToFive(x) {
+      if (x < 0) {
+        return 0;
+      }
+      return Math.round(x / 5) * 5;
+    }
 
   </script>
 </body>
