@@ -48,12 +48,13 @@
     <table id="weather">
       <tr>
         <th class='name'>Name</th>
-        <th width="100px">Höhe</th>
-        <th width="100px"><img src="resources/temp.png" alt="Temp °C" height="64px" width="64px"></th>
-        <th width="100px"><img src="resources/wind.png" alt="Wind km/h" height="64px" width="64px"></th>
-        <th width="100px"><img src="resources/boe.png" alt="Böe km/h" height="64px" width="64px"></th>
-        <th width="100px"><img src="resources/snow.png" alt="HS cm" height="64px" width="64px"></th>
-        <th width="100px"><img src="resources/deltasnow.png" alt="HS/48h cm" height="64px" width="64px"></th>
+        <th width="80px">Höhe</th>
+        <th width="80px">Uhrzeit</th>
+        <th width="80px"><img src="resources/temp.png" alt="Temp °C" height="64px" width="64px"></th>
+        <th width="80px"><img src="resources/wind.png" alt="Wind km/h" height="64px" width="64px"></th>
+        <th width="80px"><img src="resources/boe.png" alt="Böe km/h" height="64px" width="64px"></th>
+        <th width="80px"><img src="resources/snow.png" alt="HS cm" height="64px" width="64px"></th>
+        <th width="80px"><img src="resources/deltasnow.png" alt="HS/48h cm" height="64px" width="64px"></th>
       </tr>
     </table>
   </div>
@@ -77,6 +78,10 @@
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'Altitude'; //
       cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude'] ?? weather_array[i]['measuredData']['hsStationAltitude']
+      cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'Time'; //
+      const date = new Date(weather_array[i]['measuredData']['windEnd'] ?? weather_array[i]['measuredData']['hsEnd']);
+      cell.innerHTML = date.toLocaleTimeString("de-DE", {hour: '2-digit', minute: '2-digit'})
       cell = row.insertCell(- 1); // -1 is insert as last
       const lt = weather_array[i]['measuredData']['values']['LT']
       if(lt < 5.0){
