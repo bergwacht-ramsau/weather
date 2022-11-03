@@ -103,7 +103,7 @@
       cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG'])
       cell = row.insertCell(- 1); // -1 is insert as last
       const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
-      if (Boe >= 70) {
+      if (wgBoe >= 70) {
         cell.className = 'WG_BOE red'; //
       }
       else if (wgBoe >= 30) {
