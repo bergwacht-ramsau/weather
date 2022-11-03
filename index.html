@@ -96,7 +96,7 @@
       cell.innerHTML = lt
       cell = row.insertCell(- 1); // -1 is insert as last
       const wg = Math.round(weather_array[i]['measuredData']['values']['WG'])
-      if (wg >= 70) {
+      if (wg >= 50) {
         cell.className = 'WG red'; //
       }
       else if (wg >= 30) {
@@ -107,7 +107,7 @@
       cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG'])
       cell = row.insertCell(- 1); // -1 is insert as last
       const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
-      if (wgBoe >= 70) {
+      if (wgBoe >= 50) {
         cell.className = 'WG_BOE red'; //
       }
       else if (wgBoe >= 30) {
