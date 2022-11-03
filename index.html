@@ -17,13 +17,10 @@
       color: #fff;
     }
 
-    table {
-      border-spacing: 0.1em;
-    }
     table td {
-    border-top: thin solid; 
-    border-bottom: thin solid;
-}
+      border-top: solid;
+      border-color: #fff;
+    }
 
     p {
       white-space: nowrap;
@@ -62,6 +59,7 @@
     weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'brunftbergtiefe'))
     weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'blaueishuette'))
     weather_array.push(stationData['R01 Nordalpen'].find(station => station.name === 'hinterberghorn'))
+    console.log(weather_array)
     var table = document.getElementById('weather');
 
     for (var i = 0; i < weather_array.length; i++) {
