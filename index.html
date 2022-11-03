@@ -35,6 +35,12 @@
     .warning {
       color: #f60;
     }
+    .red {
+      color: red;
+    }
+    .blue {
+      color: blue;
+    }
   </style>
 </head>
 
@@ -69,29 +75,43 @@
       var row = table.insertRow(-1); // -1 is insert as last
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'title name'; //
-      cell.innerHTML = weather_array[i]['measuredData']['windStationName']
+      cell.innerHTML = weather_array[i]['measuredData']['windStationName'] ?? weather_array[i]['measuredData']['hsStationName']
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'Altitude'; //
-      cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude']
+      cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude'] ?? weather_array[i]['measuredData']['hsStationAltitude']
       cell = row.insertCell(- 1); // -1 is insert as last
+      const lt = weather_array[i]['measuredData']['values']['LT']
+      if(lt < 5.0){
+      cell.className = 'LT blue'; //
+      }else if(lt > 25.0){
+      cell.className = 'LT red'; //
+      }
+      else{
       cell.className = 'LT'; //
-      cell.innerHTML = weather_array[i]['measuredData']['values']['LT']
+      }
+      cell.innerHTML = lt
       cell = row.insertCell(- 1); // -1 is insert as last
       const wg = Math.round(weather_array[i]['measuredData']['values']['WG'])
-      if (wg >= 30) {
+      if (wg >= 70) {
+        cell.className = 'WG red'; //
+      }
+      else if (wg >= 30) {
         cell.className = 'WG warning'; //
       } else {
         cell.className = 'WG'; //
       }
-      cell.innerHTML = wg
+      cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG'])
       cell = row.insertCell(- 1); // -1 is insert as last
       const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
-      if (wgBoe >= 30) {
+      if (Boe >= 70) {
+        cell.className = 'WG_BOE red'; //
+      }
+      else if (wgBoe >= 30) {
         cell.className = 'WG_BOE warning'; //
       } else {
         cell.className = 'WG_BOE'; //
       }
-      cell.innerHTML = wgBoe
+      cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG_BOE'])
       cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'HS'; //
       cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HS'])
@@ -102,6 +122,16 @@
         cell.className = 'HSD48'; //
       }
       cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HSD48'])
+    }
+
+    function round(x) {
+      if (isNaN(x)) {
+        return '-';
+      }
+      if (x < 0) {
+        return 0;
+      }
+      return Math.round(x);
     }
 
     function roundToFive(x) {
