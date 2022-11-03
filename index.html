@@ -5,9 +5,10 @@
   <meta http-equiv="refresh" content="300" />
   <title>Wetter</title>
   <style>
-    html{
+    html {
       background-color: #808080;
     }
+
     body {
       font-family: Verdana, sans-serif;
       font-size: 1em;
@@ -15,17 +16,22 @@
       text-align: center;
       color: #fff;
     }
-    
-    table{
+
+    table {
       border-spacing: 0.1em;
     }
 
     p {
       white-space: nowrap;
     }
+
     .name {
       font-weight: bold;
       text-align: left;
+    }
+
+    .warning {
+      color: orange;
     }
   </style>
 </head>
@@ -63,21 +69,35 @@
       cell.className = 'LT'; //
       cell.innerHTML = weather_array[i]['measuredData']['values']['LT']
       cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'WG'; //
-      cell.innerHTML = Math.round(weather_array[i]['measuredData']['values']['WG'])
+      const wg = Math.round(weather_array[i]['measuredData']['values']['WG'])
+      if (wg >= 30) {
+        cell.className = 'WG warning'; //
+      } else {
+        cell.className = 'WG'; //
+      }
+      cell.innerHTML = wg
       cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'WG_BOE'; //
-      cell.innerHTML = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
+      const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
+      if (wgBoe >= 30) {
+        cell.className = 'WG_BOE warning'; //
+      } else {
+        cell.className = 'WG_BOE'; //
+      }
+      cell.innerHTML = wgBoe
       cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'HS'; //
       cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HS'])
       cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'HSD48'; //
+      if (Math.round(weather_array[i]['measuredData']['values']['HSD48'] / 5) * 5 > 0) {
+        cell.className = 'HSD48 warning'; //
+      } else {
+        cell.className = 'HSD48'; //
+      }
       cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HSD48'])
     }
 
     function roundToFive(x) {
-      if (isNaN(x)){
+      if (isNaN(x)) {
         return '-';
       }
       if (x < 0) {
