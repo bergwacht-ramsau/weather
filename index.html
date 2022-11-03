@@ -42,6 +42,7 @@
     <table id="weather">
       <tr>
         <th class='name'>Name</th>
+        <th>Höhe</th>
         <th><img src="resources/temp.png" alt="Temp °C"></th>
         <th>Wind km/h</th>
         <th>Böe km/h</th>
@@ -66,7 +67,10 @@
       var row = table.insertRow(-1); // -1 is insert as last
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'title name'; //
-      cell.innerHTML = weather_array[i]['title']
+      cell.innerHTML = weather_array[i]['measuredData']['windStationName']
+      var cell = row.insertCell(- 1); // -1 is insert as last
+      cell.className = 'Altitude'; //
+      cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude']
       cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'LT'; //
       cell.innerHTML = weather_array[i]['measuredData']['values']['LT']
