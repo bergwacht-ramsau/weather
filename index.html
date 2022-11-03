@@ -74,7 +74,7 @@
       var row = table.insertRow(-1); // -1 is insert as last
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'title name'; //
-      cell.innerHTML = weather_array[i]['measuredData']['windStationName'] ?? weather_array[i]['measuredData']['hsStationName']
+      cell.innerHTML = (weather_array[i]['measuredData']['windStationName'] ?? weather_array[i]['measuredData']['hsStationName']).split(' ')[0]
       var cell = row.insertCell(- 1); // -1 is insert as last
       cell.className = 'Altitude'; //
       cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude'] ?? weather_array[i]['measuredData']['hsStationAltitude']
