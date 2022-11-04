@@ -34,9 +34,11 @@
     .warning {
       color: #f60;
     }
+
     .red {
       color: red;
     }
+
     .blue {
       color: lightblue;
     }
@@ -72,60 +74,62 @@
     var table = document.getElementById('weather');
 
     for (var i = 0; i < weather_array.length; i++) {
-      var row = table.insertRow(-1); // -1 is insert as last
-      var cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'title name'; //
-      cell.innerHTML = (weather_array[i]['measuredData']['windStationName'] ?? weather_array[i]['measuredData']['hsStationName']).split(' ')[0]
-      var cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'Altitude'; //
-      cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude'] ?? weather_array[i]['measuredData']['hsStationAltitude']
-      cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'Time'; //
-      const date = new Date(weather_array[i]['measuredData']['windEnd'] ?? weather_array[i]['measuredData']['hsEnd']);
-      cell.innerHTML = date.toLocaleTimeString("de-DE", {hour: '2-digit', minute: '2-digit'})
-      cell = row.insertCell(- 1); // -1 is insert as last
-      const lt = weather_array[i]['measuredData']['values']['LT']
-      if(lt < 5.0){
-      cell.className = 'LT blue'; //
-      }else if(lt > 25.0){
-      cell.className = 'LT red'; //
+      if (weather_array[i]) {
+        var row = table.insertRow(-1); // -1 is insert as last
+        var cell = row.insertCell(- 1); // -1 is insert as last
+        cell.className = 'title name'; //
+        cell.innerHTML = (weather_array[i]['measuredData']['windStationName'] ?? weather_array[i]['measuredData']['hsStationName']).split(' ')[0]
+        var cell = row.insertCell(- 1); // -1 is insert as last
+        cell.className = 'Altitude'; //
+        cell.innerHTML = weather_array[i]['measuredData']['windStationAltitude'] ?? weather_array[i]['measuredData']['hsStationAltitude']
+        cell = row.insertCell(- 1); // -1 is insert as last
+        cell.className = 'Time'; //
+        const date = new Date(weather_array[i]['measuredData']['windEnd'] ?? weather_array[i]['measuredData']['hsEnd']);
+        cell.innerHTML = date.toLocaleTimeString("de-DE", { hour: '2-digit', minute: '2-digit' })
+        cell = row.insertCell(- 1); // -1 is insert as last
+        const lt = weather_array[i]['measuredData']['values']['LT']
+        if (lt < 5.0) {
+          cell.className = 'LT blue'; //
+        } else if (lt > 25.0) {
+          cell.className = 'LT red'; //
+        }
+        else {
+          cell.className = 'LT'; //
+        }
+        cell.innerHTML = lt
+        cell = row.insertCell(- 1); // -1 is insert as last
+        const wg = Math.round(weather_array[i]['measuredData']['values']['WG'])
+        if (wg >= 50) {
+          cell.className = 'WG red'; //
+        }
+        else if (wg >= 30) {
+          cell.className = 'WG warning'; //
+        } else {
+          cell.className = 'WG'; //
+        }
+        cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG'])
+        cell = row.insertCell(- 1); // -1 is insert as last
+        const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
+        if (wgBoe >= 50) {
+          cell.className = 'WG_BOE red'; //
+        }
+        else if (wgBoe >= 30) {
+          cell.className = 'WG_BOE warning'; //
+        } else {
+          cell.className = 'WG_BOE'; //
+        }
+        cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG_BOE'])
+        cell = row.insertCell(- 1); // -1 is insert as last
+        cell.className = 'HS'; //
+        cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HS'])
+        cell = row.insertCell(- 1); // -1 is insert as last
+        if (Math.round(weather_array[i]['measuredData']['values']['HSD48'] / 5) * 5 > 0) {
+          cell.className = 'HSD48 warning'; //
+        } else {
+          cell.className = 'HSD48'; //
+        }
+        cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HSD48'])
       }
-      else{
-      cell.className = 'LT'; //
-      }
-      cell.innerHTML = lt
-      cell = row.insertCell(- 1); // -1 is insert as last
-      const wg = Math.round(weather_array[i]['measuredData']['values']['WG'])
-      if (wg >= 50) {
-        cell.className = 'WG red'; //
-      }
-      else if (wg >= 30) {
-        cell.className = 'WG warning'; //
-      } else {
-        cell.className = 'WG'; //
-      }
-      cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG'])
-      cell = row.insertCell(- 1); // -1 is insert as last
-      const wgBoe = Math.round(weather_array[i]['measuredData']['values']['WG_BOE'])
-      if (wgBoe >= 50) {
-        cell.className = 'WG_BOE red'; //
-      }
-      else if (wgBoe >= 30) {
-        cell.className = 'WG_BOE warning'; //
-      } else {
-        cell.className = 'WG_BOE'; //
-      }
-      cell.innerHTML = round(weather_array[i]['measuredData']['values']['WG_BOE'])
-      cell = row.insertCell(- 1); // -1 is insert as last
-      cell.className = 'HS'; //
-      cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HS'])
-      cell = row.insertCell(- 1); // -1 is insert as last
-      if (Math.round(weather_array[i]['measuredData']['values']['HSD48'] / 5) * 5 > 0) {
-        cell.className = 'HSD48 warning'; //
-      } else {
-        cell.className = 'HSD48'; //
-      }
-      cell.innerHTML = roundToFive(weather_array[i]['measuredData']['values']['HSD48'])
     }
 
     function round(x) {
