@@ -36,9 +36,23 @@
             text-align: left;
         }
 
+        .warnings {
+            margin-top: 0.5em;
+            padding: 0.5em;
+            border: solid;
+            border-color: #fff;
+        }
+
+        .avalanche {
+            margin-top: 0.5em;
+            padding: 0.5em;
+            border: solid;
+            border-color: #fff;
+        }
+
         .warningName {
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
         }
 
         .warningDesc {
@@ -64,6 +78,22 @@
         .yellow {
             color: yellow;
         }
+
+        .by {
+
+            float: left;
+            width: 50%;
+            display: block;
+            text-align: center;
+
+        }
+
+        .sa {
+
+            display: block;
+            text-align: center;
+
+        }
     </style>
 </head>
 
@@ -82,224 +112,236 @@
                 <th width="80px"><img src="resources/deltasnow.png" alt="HS/24h cm" height="64px" width="64px"></th>
             </tr>
         </table>
-        <div id="warnings">
-            </table>
+        <div id="warnings" class="warnings">
         </div>
-        <script src="https://www.salzburg.gv.at/lawine/Station.js"></script>
-        <script>
-            var weather_array = []
-            fetch("https://weather.services.bergwacht-bayern.org").then(response =>
-                response.json().then(json => {
-                    weather_array.push(generateStation("Kühroint", "kuehroint", "1420", json));
-                    weather_array.push(generateStation("Watzmannhaus", "watzmann", "1928", json));
-                    weather_array.push(generateStation("Watzmanngrat", "watzmanngrat", "2635", json));
-                    weather_array.push(generateStation("Trischübel", "trischuebel", "1764", json));
-                    weather_array.push(generateStation("Brunftbergtiefe", "brunftbergtiefe", "1240", json));
-                    weather_array.push(generateStation("Blaueis", "blaueishuette", "1650", json));
-                    weather_array.push(generateStation("Hinterberghorn", "hinterberghorn", "2493", json));
-                    weather_array.push(generateStation("Hinterseeau", "hinterseeau", "830", json));
+        <!--
+        <div id="avalanche" class="avalanche">
+            <div class="by"><img src="https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_23.svg"
+                    alt="2/3" width="200px">
+                <p>Bayern<br>1500m</p>
+            </div>
+            <div class="sa"><img src="https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_34.svg"
+                    alt="3/4" width="200px">
+                <p>Salzburg<br>1800m</p>
+            </div>
+        </div>
+        -->
+    </div>
+    <script src="https://www.salzburg.gv.at/lawine/Station.js"></script>
+    <script>
+        var weather_array = []
+        fetch("https://weather.services.bergwacht-bayern.org").then(response =>
+            response.json().then(json => {
+                weather_array.push(generateStation("Kühroint", "kuehroint", "1420", json));
+                weather_array.push(generateStation("Watzmannhaus", "watzmann", "1928", json));
+                weather_array.push(generateStation("Watzmanngrat", "watzmanngrat", "2635", json));
+                weather_array.push(generateStation("Trischübel", "trischuebel", "1764", json));
+                weather_array.push(generateStation("Brunftbergtiefe", "brunftbergtiefe", "1240", json));
+                weather_array.push(generateStation("Blaueis", "blaueishuette", "1650", json));
+                weather_array.push(generateStation("Hinterberghorn", "hinterberghorn", "2493", json));
+                weather_array.push(generateStation("Hinterseeau", "hinterseeau", "830", json));
 
-                    var table = document.getElementById('weather');
-                    console.log(json);
+                var table = document.getElementById('weather');
+                console.log(json);
 
-                    for (var i = 0; i < weather_array.length; i++) {
-                        if (weather_array[i]) {
-                            var row = table.insertRow(-1); // -1 is insert as last
-                            var cell = row.insertCell(- 1); // -1 is insert as last
-                            cell.className = 'title name'; //
-                            cell.innerHTML = weather_array[i]['name'];
-                            var cell = row.insertCell(- 1); // -1 is insert as last
-                            cell.className = 'Altitude'; //
-                            cell.innerHTML = weather_array[i]['height'];
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            cell.className = 'Time'; //
-                            cell.innerHTML = weather_array[i]['time'];
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            const lt = weather_array[i]['temp'];
-                            if (lt < 3.0) {
-                                cell.className = 'LT blue'; //
-                            } else if (lt > 25.0) {
-                                cell.className = 'LT red'; //
-                            }
-                            else {
-                                cell.className = 'LT'; //
-                            }
-                            cell.innerHTML = lt;
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            const wg = Math.round(weather_array[i]['wind']);
-                            if (wg >= 50) {
-                                cell.className = 'WG red'; //
-                            }
-                            else if (wg >= 30) {
-                                cell.className = 'WG warning'; //
-                            } else {
-                                cell.className = 'WG'; //
-                            }
-                            cell.innerHTML = roundWind(weather_array[i]['wind']);
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            cell.className = 'WR'; //
-                            cell.innerHTML = getDirection(weather_array[i]['direction']);
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            const wgBoe = Math.round(weather_array[i]['wind_boe']);
-                            if (wgBoe >= 50) {
-                                cell.className = 'WG_BOE red'; //
-                            }
-                            else if (wgBoe >= 30) {
-                                cell.className = 'WG_BOE warning'; //
-                            } else {
-                                cell.className = 'WG_BOE'; //
-                            }
-                            cell.innerHTML = roundWind(weather_array[i]['wind_boe']);
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            cell.className = 'HS'; //
-                            cell.innerHTML = roundToFive(weather_array[i]['snow']);
-                            cell = row.insertCell(- 1); // -1 is insert as last
-                            if (Math.round(weather_array[i]['snow_delta'] / 5) * 5 > 0) {
-                                cell.className = 'HSD24 warning'; //
-                            } else {
-                                cell.className = 'HSD24'; //
-                            }
-                            cell.innerHTML = roundToFive(weather_array[i]['snow_delta']);
+                for (var i = 0; i < weather_array.length; i++) {
+                    if (weather_array[i]) {
+                        var row = table.insertRow(-1); // -1 is insert as last
+                        var cell = row.insertCell(- 1); // -1 is insert as last
+                        cell.className = 'title name'; //
+                        cell.innerHTML = weather_array[i]['name'];
+                        var cell = row.insertCell(- 1); // -1 is insert as last
+                        cell.className = 'Altitude'; //
+                        cell.innerHTML = weather_array[i]['height'];
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        cell.className = 'Time'; //
+                        cell.innerHTML = weather_array[i]['time'];
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        const lt = weather_array[i]['temp'];
+                        if (lt < 3.0) {
+                            cell.className = 'LT blue'; //
+                        } else if (lt > 25.0) {
+                            cell.className = 'LT red'; //
                         }
+                        else {
+                            cell.className = 'LT'; //
+                        }
+                        cell.innerHTML = lt;
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        const wg = Math.round(weather_array[i]['wind'] * 3.6);
+                        if (wg >= 50) {
+                            cell.className = 'WG red'; //
+                        }
+                        else if (wg >= 30) {
+                            cell.className = 'WG warning'; //
+                        } else {
+                            cell.className = 'WG'; //
+                        }
+                        cell.innerHTML = roundWind(weather_array[i]['wind']);
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        cell.className = 'WR'; //
+                        cell.innerHTML = getDirection(weather_array[i]['direction']);
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        const wgBoe = Math.round(weather_array[i]['wind_boe'] * 3.6);
+                        if (wgBoe >= 50) {
+                            cell.className = 'WG_BOE red'; //
+                        }
+                        else if (wgBoe >= 30) {
+                            cell.className = 'WG_BOE warning'; //
+                        } else {
+                            cell.className = 'WG_BOE'; //
+                        }
+                        cell.innerHTML = roundWind(weather_array[i]['wind_boe']);
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        cell.className = 'HS'; //
+                        cell.innerHTML = roundToFive(weather_array[i]['snow']);
+                        cell = row.insertCell(- 1); // -1 is insert as last
+                        if (Math.round(weather_array[i]['snow_delta'] / 5) * 5 > 0) {
+                            cell.className = 'HSD24 warning'; //
+                        } else {
+                            cell.className = 'HSD24'; //
+                        }
+                        cell.innerHTML = roundToFive(weather_array[i]['snow_delta']);
                     }
                 }
-                )
+            }
             )
+        )
 
-            function roundWind(x) {
-                if (isNaN(x)) {
-                    return '-';
-                }
-                if (x < 0) {
-                    return 0;
-                }
-                return Math.round(x * 3.6);
+        function roundWind(x) {
+            if (isNaN(x)) {
+                return '-';
             }
-
-            function getDirection(x){
-                if (isNaN(x)) {
-                    return '-';
-                }
-                if(x > 337 || x < 23){
-                    return 'N'
-                }
-                if(x > 22 || x < 68){
-                    return 'NO'
-                }
-                if(x > 67 || x < 113){
-                    return 'O'
-                }
-                if(x > 112 || x < 158){
-                    return 'SO'
-                }
-                if(x > 157 || x < 203){
-                    return 'S'
-                }
-                if(x > 202 || x < 248){
-                    return 'SW'
-                }
-                if(x > 247 || x < 293){
-                    return 'W'
-                }
-                if(x > 292 || x < 338){
-                    return 'NW'
-                }
-                return '-'
+            if (x < 0) {
+                return 0;
             }
+            return Math.round(x * 3.6);
+        }
 
-            function roundToFive(x) {
-                if (isNaN(x)) {
-                    return '-';
-                }
-                if (x < 0) {
-                    return 0;
-                }
-                return Math.round(x / 5) * 5;
+        function getDirection(x) {
+            if (isNaN(x)) {
+                return '-';
             }
-
-            function generateStation(nameMDS, nameLWD, height, json) {
-                temp = json[nameMDS]["values"][height].find(value => value.name == "Lufttemperatur") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Lufttemperatur")["value"]) : NaN;
-                wind = json[nameMDS]["values"][height].find(value => value.name == "Windgeschwindigkeit") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windgeschwindigkeit")["value"]) : NaN;
-                direction = json[nameMDS]["values"][height].find(value => value.name == "Windrichtung") ? parseInt(json[nameMDS]["values"][height].find(value => value.name == "Windrichtung")["value"]) : NaN;
-                wind_boe = json[nameMDS]["values"][height].find(value => value.name == "Windböe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windböe")["value"]) : NaN;
-                snow = json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe")["value"]) : NaN;
-                return {
-                    "name": nameMDS,
-                    "height": height,
-                    "time": json[nameMDS]["time"].split(' ')[3],
-                    "temp": temp,
-                    "wind": wind,
-                    "direction": direction,
-                    "wind_boe": wind_boe,
-                    "snow": snow,
-                    "snow_delta": stationData['R01 Nordalpen'].find(station => station.name === nameLWD)['measuredData']['values']['HSD24']
-                }
+            if (x > 337 || x < 23) {
+                return 'N'
             }
+            if (x > 22 || x < 68) {
+                return 'NO'
+            }
+            if (x > 67 || x < 113) {
+                return 'O'
+            }
+            if (x > 112 || x < 158) {
+                return 'SO'
+            }
+            if (x > 157 || x < 203) {
+                return 'S'
+            }
+            if (x > 202 || x < 248) {
+                return 'SW'
+            }
+            if (x > 247 || x < 293) {
+                return 'W'
+            }
+            if (x > 292 || x < 338) {
+                return 'NW'
+            }
+            return '-'
+        }
 
-        </script>
-        <script>
-            fetch("https://weather.services.bergwacht-bayern.org/warnings?lat=47.6075&lon=12.8964&level=3").then(response =>
-                response.json().then(json => {
+        function roundToFive(x) {
+            if (isNaN(x)) {
+                return '-';
+            }
+            if (x < 0) {
+                return 0;
+            }
+            return Math.round(x / 5) * 5;
+        }
 
-                    console.log(json)
+        function generateStation(nameMDS, nameLWD, height, json) {
+            temp = json[nameMDS]["values"][height].find(value => value.name == "Lufttemperatur") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Lufttemperatur")["value"]) : NaN;
+            wind = json[nameMDS]["values"][height].find(value => value.name == "Windgeschwindigkeit") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windgeschwindigkeit")["value"]) : NaN;
+            direction = json[nameMDS]["values"][height].find(value => value.name == "Windrichtung") ? parseInt(json[nameMDS]["values"][height].find(value => value.name == "Windrichtung")["value"]) : NaN;
+            wind_boe = json[nameMDS]["values"][height].find(value => value.name == "Windböe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windböe")["value"]) : NaN;
+            snow = json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe")["value"]) : NaN;
+            return {
+                "name": nameMDS,
+                "height": height,
+                "time": json[nameMDS]["time"].split(' ')[3],
+                "temp": temp,
+                "wind": wind,
+                "direction": direction,
+                "wind_boe": wind_boe,
+                "snow": snow,
+                "snow_delta": stationData['R01 Nordalpen'].find(station => station.name === nameLWD)['measuredData']['values']['HSD24']
+            }
+        }
 
-                    var element = document.getElementById('warnings');
-                    if (json.length === 0) {
+    </script>
+    <script>
+        fetch("https://weather.services.bergwacht-bayern.org/warnings?lat=47.6075&lon=12.8964&level=3").then(response =>
+            response.json().then(json => {
+
+                console.log(json)
+
+                var element = document.getElementById('warnings');
+                if (json.length === 0) {
+                    var para = document.createElement("p");
+                    var node = document.createTextNode("Aktuell keine Unwetterwarnungen");
+                    para.appendChild(node);
+                    element.appendChild(para);
+                } else {
+                    for (var i = 0; i < json.length; i++) {
                         var para = document.createElement("p");
-                        var node = document.createTextNode("Aktuell keine Unwetterwarnungen");
+                        if (json[i]['level'] == 2) {
+                            para.className = "yellow warningName";
+                        } else if (json[i]['level'] == 3) {
+                            para.className = "warning warningName";
+                        } else if (json[i]['level'] == 4) {
+                            para.className = "red warningName"
+                        } else if (json[i]['level'] == 5) {
+                            para.className = "violet warningName"
+                        }
+                        var node = document.createTextNode(json[i]['name']);
                         para.appendChild(node);
                         element.appendChild(para);
-                    } else {
-                        for (var i = 0; i < json.length; i++) {
-                            var para = document.createElement("p");
-                            if (json[i]['level'] == 2) {
-                                para.className = "yellow warningName";
-                            } else if (json[i]['level'] == 3) {
-                                para.className = "warning warningName";
-                            } else if (json[i]['level'] == 4) {
-                                para.className = "red warningName"
-                            } else if (json[i]['level'] == 5) {
-                                para.className = "violet warningName"
-                            }
-                            var node = document.createTextNode(json[i]['name']);
-                            para.appendChild(node);
-                            element.appendChild(para);
-                            const startDate = new Date(json[i]['start']);
-                            const endDate = new Date(json[i]['end']);
-                            para = document.createElement("p");
-                            if (json[i]['level'] == 2) {
-                                para.className = "yellow warningDesc";
-                            } else if (json[i]['level'] == 3) {
-                                para.className = "warning warningDesc";
-                            } else if (json[i]['level'] == 4) {
-                                para.className = "red warningDesc"
-                            } else if (json[i]['level'] == 5) {
-                                para.className = "violet warningDesc"
-                            }
-                            node = document.createTextNode(startDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr bis ' + endDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr');
-                            para.appendChild(node);
-                            element.appendChild(para);
-                            para = document.createElement("p");
-                            if (json[i]['level'] == 2) {
-                                para.className = "yellow warningDesc";
-                            } else if (json[i]['level'] == 3) {
-                                para.className = "warning warningDesc";
-                            } else if (json[i]['level'] == 4) {
-                                para.className = "red warningDesc"
-                            } else if (json[i]['level'] == 5) {
-                                para.className = "violet warningDesc"
-                            }
-                            node = document.createTextNode(json[i]['description']);
-                            para.appendChild(node);
-                            element.appendChild(para);
+                        const startDate = new Date(json[i]['start']);
+                        const endDate = new Date(json[i]['end']);
+                        para = document.createElement("p");
+                        if (json[i]['level'] == 2) {
+                            para.className = "yellow warningDesc";
+                        } else if (json[i]['level'] == 3) {
+                            para.className = "warning warningDesc";
+                        } else if (json[i]['level'] == 4) {
+                            para.className = "red warningDesc"
+                        } else if (json[i]['level'] == 5) {
+                            para.className = "violet warningDesc"
                         }
-
+                        node = document.createTextNode(startDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr bis ' + endDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr');
+                        para.appendChild(node);
+                        element.appendChild(para);
+                        para = document.createElement("p");
+                        if (json[i]['level'] == 2) {
+                            para.className = "yellow warningDesc";
+                        } else if (json[i]['level'] == 3) {
+                            para.className = "warning warningDesc";
+                        } else if (json[i]['level'] == 4) {
+                            para.className = "red warningDesc"
+                        } else if (json[i]['level'] == 5) {
+                            para.className = "violet warningDesc"
+                        }
+                        node = document.createTextNode(json[i]['description']);
+                        para.appendChild(node);
+                        element.appendChild(para);
                     }
-                }
-                )
-            )
 
-        </script>
+                }
+            }
+            )
+        )
+
+    </script>
 </body>
 
 </html>
