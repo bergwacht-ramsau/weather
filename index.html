@@ -50,6 +50,10 @@
             border-color: #fff;
         }
 
+        .warningContainer {
+            display: none;
+        }
+
         .warningName {
             font-weight: bold;
             margin: 0;
@@ -57,6 +61,11 @@
 
         .warningDesc {
             margin: 0;
+        }
+
+        .warningCount {
+            margin: 0;
+            text-align: right;
         }
 
         .warning {
@@ -293,6 +302,8 @@
                     element.appendChild(para);
                 } else {
                     for (var i = 0; i < json.length; i++) {
+                        var container = document.createElement("div");
+                        container.className = "warningContainer";
                         var para = document.createElement("p");
                         if (json[i]['level'] == 2) {
                             para.className = "yellow warningName";
@@ -305,7 +316,7 @@
                         }
                         var node = document.createTextNode(json[i]['name']);
                         para.appendChild(node);
-                        element.appendChild(para);
+                        container.appendChild(para);
                         const startDate = new Date(json[i]['start']);
                         const endDate = new Date(json[i]['end']);
                         para = document.createElement("p");
@@ -320,7 +331,7 @@
                         }
                         node = document.createTextNode(startDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr bis ' + endDate.toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) + ' Uhr');
                         para.appendChild(node);
-                        element.appendChild(para);
+                        container.appendChild(para);
                         para = document.createElement("p");
                         if (json[i]['level'] == 2) {
                             para.className = "yellow warningDesc";
@@ -333,13 +344,33 @@
                         }
                         node = document.createTextNode(json[i]['description']);
                         para.appendChild(node);
-                        element.appendChild(para);
+                        container.appendChild(para);
+                        para = document.createElement("p");
+                        para.className = "warningCount";
+                        node = document.createTextNode((i + 1) + " / " + json.length);
+                        para.appendChild(node);
+                        container.appendChild(para);
+                        element.appendChild(container);
                     }
-
+                    showWarnings();
                 }
             }
             )
         )
+
+        var warningIndex = 0;
+
+        function showWarnings() {
+            var i;
+            var warnings = document.getElementsByClassName("warningContainer");
+            for (i = 0; i < warnings.length; i++) {
+                warnings[i].style.display = "none";
+            }
+            warningIndex++;
+            if (warningIndex > warnings.length) { warningIndex = 1 }
+            warnings[warningIndex - 1].style.display = "block";
+            setTimeout(showWarnings, 15000); // Change image every 15 seconds
+        }
 
     </script>
 </body>
