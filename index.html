@@ -426,10 +426,12 @@
                             img2.alt = ratingsAndHeight[1].level;
                             element.appendChild(img2);
                             let para = document.createElement("p");
+                            para.appendChild(document.createTextNode("Vormittag - Nachmittag"));
                             if (ratingsAndHeight[0].height) {
-                                para.appendChild(document.createTextNode(ratingsAndHeight[0].height));
                                 para.appendChild(document.createElement("br"))
+                                para.appendChild(document.createTextNode(ratingsAndHeight[0].height));
                             }
+                            para.appendChild(document.createElement("br"))
                             para.appendChild(document.createTextNode(date));
                             element.appendChild(para);
                         } else {
@@ -444,10 +446,13 @@
                             img2.alt = ratingsAndHeight[0].level;
                             element.appendChild(img2);
                             let para = document.createElement("p");
+                            para.appendChild(document.createTextNode("Vormittag - Nachmittag"));
                             if (ratingsAndHeight[1].height) {
+                                para.appendChild(document.createElement("br");
                                 para.appendChild(document.createTextNode(ratingsAndHeight[1].height));
-                                para.appendChild(document.createElement("br"))
                             }
+
+                            para.appendChild(document.createElement("br"))
                             para.appendChild(document.createTextNode(date));
                             element.appendChild(para);
                         }
