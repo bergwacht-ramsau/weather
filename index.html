@@ -382,27 +382,76 @@
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(data, 'text/xml');
                     const warning = getWarningsForRegion(xmlDoc, region);
+                    const date = getWarningDate(warning);
                     const ratings = warning.getElementsByTagName('DangerRating');
                     const ratingsAndHeight = getRatingsAndHeight(ratings);
-                    if (!ratingsAndHeight) {
+                    if (ratingsAndHeight.length === 0) {
                         return;
                     }
-
-                    const container= document.getElementById('avalanche');
-                    container.className = "avalanche";
-                    const element = document.getElementById(elementId);
-                    const img = document.createElement("img");
-                    img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight.level + ".svg";
-                    img.width = 200;
-                    img.alt = ratingsAndHeight.level;
-                    element.appendChild(img);
-                    let para = document.createElement("p");
-                    para.appendChild(document.createTextNode(name));
-                    if(ratingsAndHeight.height){
-                    para.appendChild(document.createElement("br"))
-                    para.appendChild(document.createTextNode(ratingsAndHeight.height));
+                    if (ratingsAndHeight.length === 1) {
+                        const container = document.getElementById('avalanche');
+                        container.className = "avalanche";
+                        const element = document.getElementById(elementId);
+                        let header = document.createElement("p");
+                        header.appendChild(document.createTextNode(name));
+                        element.appendChild(header);
+                        const img = document.createElement("img");
+                        img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight[0].level + ".svg";
+                        img.width = 200;
+                        img.alt = ratingsAndHeight[0].level;
+                        element.appendChild(img);
+                        let para = document.createElement("p");
+                        if (ratingsAndHeight[0].height) {
+                            para.appendChild(document.createTextNode(ratingsAndHeight[0].height));
+                            para.appendChild(document.createElement("br"))
+                        }
+                        para.appendChild(document.createTextNode(date));
+                        element.appendChild(para);
+                    } else {
+                        const container = document.getElementById('avalanche');
+                        container.className = "avalanche";
+                        const element = document.getElementById(elementId);
+                        let header = document.createElement("p");
+                        header.appendChild(document.createTextNode(name));
+                        element.appendChild(header);
+                        if (new Date(ratingsAndHeight[0].end) < new Date(ratingsAndHeight[1].end)) {
+                            const img = document.createElement("img");
+                            img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight[0].level + ".svg";
+                            img.width = 100;
+                            img.alt = ratingsAndHeight[0].level;
+                            element.appendChild(img);
+                            const img2 = document.createElement("img");
+                            img2.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight[1].level + ".svg";
+                            img2.width = 100;
+                            img2.alt = ratingsAndHeight[1].level;
+                            element.appendChild(img2);
+                            let para = document.createElement("p");
+                            if (ratingsAndHeight[0].height) {
+                                para.appendChild(document.createTextNode(ratingsAndHeight[0].height));
+                                para.appendChild(document.createElement("br"))
+                            }
+                            para.appendChild(document.createTextNode(date));
+                            element.appendChild(para);
+                        } else {
+                            const img = document.createElement("img");
+                            img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight[1].level + ".svg";
+                            img.width = 100;
+                            img.alt = ratingsAndHeight[1].level;
+                            element.appendChild(img);
+                            const img2 = document.createElement("img");
+                            img2.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight[0].level + ".svg";
+                            img2.width = 100;
+                            img2.alt = ratingsAndHeight[0].level;
+                            element.appendChild(img2);
+                            let para = document.createElement("p");
+                            if (ratingsAndHeight[1].height) {
+                                para.appendChild(document.createTextNode(ratingsAndHeight[1].height));
+                                para.appendChild(document.createElement("br"))
+                            }
+                            para.appendChild(document.createTextNode(date));
+                            element.appendChild(para);
+                        }
                     }
-                    element.appendChild(para);
                 }).catch(function (error) {
                     console.log("Fehler: bei Auslesen der XML-Datei " + error);
                 });
@@ -418,25 +467,87 @@
             }
         }
         function getRatingsAndHeight(ratings) {
-            if (ratings.length === 1) {
-                const level = ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML;
-                return { level: level, height: null };
-            } else if (ratings.length > 1) {
-                let level;
-                if (ratings.item(0).getElementsByTagName('validElevation')[0].attributes['xlink:href']['value'].endsWith('Hi')) {
-                    level = ratings.item(1).getElementsByTagName('mainValue')[0].innerHTML + ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML;
+            const tempRatings = generateTempRatings(ratings);
+            if (tempRatings.length === 1) {
+                return [{ level: tempRatings.level, height: null }];
+            } else if (tempRatings.length > 1) {
+                const hiRatings = tempRatings.filter(rating => rating.elevation.endsWith('Hi'));
+                const loRatings = tempRatings.filter(rating => rating.elevation.endsWith('Lo'));
+                if (hiRatings.length == 1) {
+                    let height = "Waldgrenze"
+                    let elevation = hiRatings[0].elevation.substring(0, hiRatings[0].elevation.length - 2);
+                    if (elevation !== "Forestline") {
+                        height = elevation + "m";
+                    }
+                    let level = loRatings[0].level;
+                    if (loRatings[0].level !== hiRatings[0].level) {
+                        level += hiRatings[0].level;
+                    }
+                    return [{ level: level, height: height }];
+                }
+                if (hiRatings[0].end === loRatings[0].end) {
+                    let height = "Waldgrenze"
+                    let elevation = hiRatings[0].elevation.substring(0, hiRatings[0].elevation.length - 2);
+                    if (elevation !== "Forestline") {
+                        height = elevation + "m"
+                    }
+                    let level = loRatings[0].level;
+                    if (loRatings[0].level !== hiRatings[0].level) {
+                        level += hiRatings[0].level
+                    }
+                    let height2 = "Waldgrenze"
+                    let elevation2 = hiRatings[1].elevation.substring(0, hiRatings[1].elevation.length - 2);
+                    if (elevation2 !== "Forestline") {
+                        height2 = elevation2 + "m"
+                    }
+                    let level2 = loRatings[1].level;
+                    if (loRatings[1].level !== hiRatings[1].level) {
+                        level2 += hiRatings[1].level
+                    }
+                    return [{ level: level, height: height, end: hiRatings[0].end }, { level: level2, height: height2, end: hiRatings[1].end }];
                 } else {
-                    level = ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML + ratings.item(1).getElementsByTagName('mainValue')[0].innerHTML;
+                    let height = "Waldgrenze"
+                    let elevation = hiRatings[0].elevation.substring(0, hiRatings[0].elevation.length - 2);
+                    if (elevation !== "Forestline") {
+                        height = elevation + "m"
+                    }
+                    let level = loRatings[1].level;
+                    if (loRatings[1].level !== hiRatings[0].level) {
+                        level += hiRatings[0].level
+                    }
+                    let height2 = "Waldgrenze"
+                    let elevation2 = hiRatings[1].elevation.substring(0, hiRatings[1].elevation.length - 2);
+                    if (elevation2 !== "Forestline") {
+                        height2 = elevation2 + "m"
+                    }
+                    let level2 = loRatings[0].level;
+                    if (loRatings[0].level !== hiRatings[1].level) {
+                        level2 += hiRatings[1].level
+                    }
+                    return [{ level: level, height: height, end: hiRatings[1].end }, { level: level2, height: height2, end: hiRatings[0].end }];
                 }
-                let height = "Waldgrenze"
-                let elevation = ratings.item(0).getElementsByTagName('validElevation')[0].attributes['xlink:href']['value'].split("Range_")[1];
-                elevation = elevation.substring(0, elevation.length - 2)
-                if (elevation !== "Forestline") {
-                    height = elevation + "m"
-                }
-                return { level: level, height: height };
             }
-            return null;
+            return [];
+        }
+
+        function getWarningDate(warning) {
+            return new Date(warning.getElementsByTagName('dateTimeReport')[0].innerHTML).toLocaleDateString("de-DE");
+        }
+
+        function generateTempRatings(ratings) {
+            let temp = [];
+            for (let i = 0; i < ratings.length; i++) {
+                let end = null;
+                if (ratings.item(i).getElementsByTagName('endPosition').length > 0) {
+                    end = ratings.item(i).getElementsByTagName('endPosition')[0].innerHTML;
+                }
+                let elevation = null;
+                if (ratings.item(i).getElementsByTagName('validElevation').length > 0) {
+                    elevation = ratings.item(i).getElementsByTagName('validElevation')[0].attributes['xlink:href']['value'].split("Range_")[1];
+                }
+                temp.push({ end: end, elevation: elevation, level: ratings.item(i).getElementsByTagName('mainValue')[0].innerHTML });
+            }
+            return temp;
         }
     </script>
 </body>
