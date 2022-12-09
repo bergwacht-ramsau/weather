@@ -51,6 +51,10 @@
             border-color: #fff;
         }
 
+        .hidden {
+            display: none;
+        }
+
         .warningContainer {
             display: none;
         }
@@ -124,18 +128,12 @@
         </table>
         <div id="warnings" class="warnings">
         </div>
-        <!--
-        <div id="avalanche" class="avalanche">
-            <div class="by"><img src="https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_23.svg"
-                    alt="2/3" width="200px">
-                <p>Bayern<br>1500m</p>
+        <div id="avalanche" class="avalanche hidden">
+            <div id="by" class="by">
             </div>
-            <div class="sa"><img src="https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_34.svg"
-                    alt="3/4" width="200px">
-                <p>Salzburg<br>1800m</p>
+            <div id="sa" class="sa">
             </div>
         </div>
-        -->
     </div>
     <script src="https://www.salzburg.gv.at/lawine/Station.js"></script>
     <script>
@@ -152,7 +150,6 @@
                 weather_array.push(generateStation("Hinterseeau", "hinterseeau", "830", json));
 
                 var table = document.getElementById('weather');
-                console.log(json);
 
                 for (var i = 0; i < weather_array.length; i++) {
                     if (weather_array[i]) {
@@ -293,8 +290,6 @@
         fetch("https://weather.services.bergwacht-bayern.org/warnings?lat=47.6075&lon=12.8964&level=3").then(response =>
             response.json().then(json => {
 
-                console.log(json)
-
                 var element = document.getElementById('warnings');
                 if (json.length === 0) {
                     var para = document.createElement("p");
@@ -373,6 +368,76 @@
             setTimeout(showWarnings, 15000); // Change image every 15 seconds
         }
 
+    </script>
+    <script>
+        generateAvalancheWarnings('https://www.avalanche-warnings.eu/public/salzburg/caaml', 'AT-05-17', 'sa', 'Salzburg');
+        generateAvalancheWarnings('https://www.avalanche-warnings.eu/public/bayern/caaml', 'DE-BY-60', 'by', 'Bayern');
+
+        function generateAvalancheWarnings(url, region, elementId, name) {
+            fetch(url)
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (data) {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data, 'text/xml');
+                    const warning = getWarningsForRegion(xmlDoc, region);
+                    const ratings = warning.getElementsByTagName('DangerRating');
+                    const ratingsAndHeight = getRatingsAndHeight(ratings);
+                    if (!ratingsAndHeight) {
+                        return;
+                    }
+
+                    const container= document.getElementById('avalanche');
+                    container.className = "avalanche";
+                    const element = document.getElementById(elementId);
+                    const img = document.createElement("img");
+                    img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-levels/danger_" + ratingsAndHeight.level + ".svg";
+                    img.width = 200;
+                    img.alt = ratingsAndHeight.level;
+                    element.appendChild(img);
+                    let para = document.createElement("p");
+                    para.appendChild(document.createTextNode(name));
+                    if(ratingsAndHeight.height){
+                    para.appendChild(document.createElement("br"))
+                    para.appendChild(document.createTextNode(ratingsAndHeight.height));
+                    }
+                    element.appendChild(para);
+                }).catch(function (error) {
+                    console.log("Fehler: bei Auslesen der XML-Datei " + error);
+                });
+        }
+
+        function getWarningsForRegion(xmlDoc, region) {
+            locRefs = xmlDoc.getElementsByTagName('locRef');
+            for (let i = 0; i < locRefs.length; i++) {
+                let locRef = locRefs.item(i);
+                if (locRef.attributes['xlink:href']['value'] === region) {
+                    return locRef.parentElement;
+                }
+            }
+        }
+        function getRatingsAndHeight(ratings) {
+            if (ratings.length === 1) {
+                const level = ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML;
+                return { level: level, height: null };
+            } else if (ratings.length > 1) {
+                let level;
+                if (ratings.item(0).getElementsByTagName('validElevation')[0].attributes['xlink:href']['value'].endsWith('Hi')) {
+                    level = ratings.item(1).getElementsByTagName('mainValue')[0].innerHTML + ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML;
+                } else {
+                    level = ratings.item(0).getElementsByTagName('mainValue')[0].innerHTML + ratings.item(1).getElementsByTagName('mainValue')[0].innerHTML;
+                }
+                let height = "Waldgrenze"
+                let elevation = ratings.item(0).getElementsByTagName('validElevation')[0].attributes['xlink:href']['value'].split("Range_")[1];
+                elevation = elevation.substring(0, elevation.length - 2)
+                if (elevation !== "Forestline") {
+                    height = elevation + "m"
+                }
+                return { level: level, height: height };
+            }
+            return null;
+        }
     </script>
 </body>
 
