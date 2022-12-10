@@ -161,8 +161,12 @@
                         cell.className = 'Altitude'; //
                         cell.innerHTML = weather_array[i]['height'];
                         cell = row.insertCell(- 1); // -1 is insert as last
-                        cell.className = 'Time'; //
-                        cell.innerHTML = weather_array[i]['time'];
+                        if (new Date(Date.now() - (1000 * 60 * 15)) > time) {
+                            cell.className = 'Time red'; //
+                        } else {
+                            cell.className = 'Time'; //
+                        }
+                        cell.innerHTML = weather_array[i]['time'].getHours()+":"+weather_array[i]['time'].getMinutes();
                         cell = row.insertCell(- 1); // -1 is insert as last
                         const lt = weather_array[i]['temp'];
                         if (lt < 3.0) {
@@ -272,10 +276,18 @@
             direction = json[nameMDS]["values"][height].find(value => value.name == "Windrichtung") ? parseInt(json[nameMDS]["values"][height].find(value => value.name == "Windrichtung")["value"]) : NaN;
             wind_boe = json[nameMDS]["values"][height].find(value => value.name == "Windböe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windböe")["value"]) : NaN;
             snow = json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe")["value"]) : NaN;
+            timeString = json[nameMDS]["time"].split(' ')[3];
+            time = new Date();
+            time.setHours(timeString.split(':')[0]);
+            time.setMinutes(timeString.split(':')[1]);
+            time.setSeconds(0);
+            if (new Date(Date.now() - (1000 * 60 * 60)) > time) {
+                return null;
+            }
             return {
                 "name": nameMDS,
                 "height": height,
-                "time": json[nameMDS]["time"].split(' ')[3],
+                "time": time,
                 "temp": temp,
                 "wind": wind,
                 "direction": direction,
@@ -536,7 +548,10 @@
         }
 
         function getWarningDate(warning) {
-            return new Date(warning.getElementsByTagName('dateTimeReport')[0].innerHTML).toLocaleDateString("de-DE");
+            const options = {
+                timeZone: "UTC"
+            };
+            return new Date(warning.getElementsByTagName('endPosition')[0].innerHTML).toLocaleDateString("de-DE", options);
         }
 
         function generateTempRatings(ratings) {
