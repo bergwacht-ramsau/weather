@@ -486,7 +486,7 @@
         function getRatingsAndHeight(ratings) {
             const tempRatings = generateTempRatings(ratings);
             if (tempRatings.length === 1) {
-                return [{ level: tempRatings.level, height: null }];
+                return [{ level: tempRatings[0].level, height: null }];
             } else if (tempRatings.length > 1) {
                 const hiRatings = tempRatings.filter(rating => rating.elevation.endsWith('Hi'));
                 const loRatings = tempRatings.filter(rating => rating.elevation.endsWith('Lo'));
