@@ -45,7 +45,7 @@
         }
 
         .avalanche {
-            overflow:hidden;
+            overflow: hidden;
             margin-top: 0.5em;
             padding: 0.5em;
             border: solid;
@@ -95,7 +95,6 @@
         }
 
         .by {
-
             float: left;
             width: 350px;
             display: block;
@@ -103,12 +102,19 @@
 
         }
 
+        .by:hover {
+            cursor: pointer;
+        }
+
         .sa {
-            float:right;
+            float: right;
             width: 350px;
             display: block;
             text-align: center;
+        }
 
+        .sa:hover {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -131,13 +137,18 @@
         <div id="warnings" class="warnings">
         </div>
         <div id="avalanche" class="avalanche hidden">
-            <div id="by" class="by">
+            <div id="by" class="by" onclick="openInNewTab('https://www.lawinenwarndienst-bayern.de/');">
             </div>
-            <div id="sa" class="sa">
+            <div id="sa" class="sa" onclick="openInNewTab('https://lawine.salzburg.at/');">
             </div>
         </div>
     </div>
     <script src="https://www.salzburg.gv.at/lawine/Station.js"></script>
+    <script type="application/javascript">
+        function openInNewTab(url) {
+            window.open(url, '_blank').focus();
+        }
+    </script>
     <script>
         var weather_array = []
         fetch("https://weather.services.bergwacht-bayern.org").then(response =>
@@ -168,7 +179,7 @@
                         } else {
                             cell.className = 'Time'; //
                         }
-                        const options = { hour:'2-digit', minute: '2-digit' };
+                        const options = { hour: '2-digit', minute: '2-digit' };
                         cell.innerHTML = weather_array[i]['time'].toLocaleString('de-DE', options);
                         cell = row.insertCell(- 1); // -1 is insert as last
                         const lt = weather_array[i]['temp'];
@@ -296,7 +307,7 @@
             }
         }
 
-        function generateDate(dateTimeString){
+        function generateDate(dateTimeString) {
             const dateTimeArray = dateTimeString.split(' ');
             const day = dateTimeArray[0].replace('.', '');
             const month = generateMonth(dateTimeArray[1]);
@@ -306,8 +317,8 @@
             return new Date(year, month, day, hour, minute);
         }
 
-        function generateMonth(monthString){
-            switch(monthString){
+        function generateMonth(monthString) {
+            switch (monthString) {
                 case 'Jan': return 1;
                 case 'Feb': return 2;
                 case 'Mär': return 3;
