@@ -13,7 +13,7 @@
         body {
             width: 820px;
             font-family: Verdana, sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.5em;
             margin: 0.5em;
             text-align: center;
             color: #fff;
@@ -45,6 +45,7 @@
         }
 
         .avalanche {
+            overflow:hidden;
             margin-top: 0.5em;
             padding: 0.5em;
             border: solid;
@@ -96,14 +97,15 @@
         .by {
 
             float: left;
-            width: 50%;
+            width: 350px;
             display: block;
             text-align: center;
 
         }
 
         .sa {
-
+            float:right;
+            width: 350px;
             display: block;
             text-align: center;
 
@@ -166,7 +168,8 @@
                         } else {
                             cell.className = 'Time'; //
                         }
-                        cell.innerHTML = weather_array[i]['time'].getHours()+":"+weather_array[i]['time'].getMinutes();
+                        const options = { hour:'2-digit', minute: '2-digit' };
+                        cell.innerHTML = weather_array[i]['time'].toLocaleString('de-DE', options);
                         cell = row.insertCell(- 1); // -1 is insert as last
                         const lt = weather_array[i]['temp'];
                         if (lt < 3.0) {
@@ -276,11 +279,7 @@
             direction = json[nameMDS]["values"][height].find(value => value.name == "Windrichtung") ? parseInt(json[nameMDS]["values"][height].find(value => value.name == "Windrichtung")["value"]) : NaN;
             wind_boe = json[nameMDS]["values"][height].find(value => value.name == "Windböe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Windböe")["value"]) : NaN;
             snow = json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe") ? parseFloat(json[nameMDS]["values"][height].find(value => value.name == "Schneehöhe")["value"]) : NaN;
-            timeString = json[nameMDS]["time"].split(' ')[3];
-            time = new Date();
-            time.setHours(timeString.split(':')[0]);
-            time.setMinutes(timeString.split(':')[1]);
-            time.setSeconds(0);
+            time = generateDate(json[nameMDS]["time"]);
             if (new Date(Date.now() - (1000 * 60 * 60)) > time) {
                 return null;
             }
@@ -294,6 +293,33 @@
                 "wind_boe": wind_boe,
                 "snow": snow,
                 "snow_delta": stationData['R01 Nordalpen'].find(station => station.name === nameLWD)['measuredData']['values']['HSD24']
+            }
+        }
+
+        function generateDate(dateTimeString){
+            const dateTimeArray = dateTimeString.split(' ');
+            const day = dateTimeArray[0].replace('.', '');
+            const month = generateMonth(dateTimeArray[1]);
+            const year = dateTimeArray[2];
+            const hour = dateTimeArray[3].split(':')[0];
+            const minute = dateTimeArray[3].split(':')[1];
+            return new Date(year, month, day, hour, minute);
+        }
+
+        function generateMonth(monthString){
+            switch(monthString){
+                case 'Jan': return 1;
+                case 'Feb': return 2;
+                case 'Mär': return 3;
+                case 'Apr': return 4;
+                case 'Mai': return 5;
+                case 'Jun': return 6;
+                case 'Jul': return 7;
+                case 'Aug': return 8;
+                case 'Sep': return 9;
+                case 'Okt': return 10;
+                case 'Nov': return 11;
+                case 'Dez': return 12;
             }
         }
 
