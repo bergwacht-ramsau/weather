@@ -174,7 +174,9 @@
                         cell.className = 'Altitude'; //
                         cell.innerHTML = weather_array[i]['height'];
                         cell = row.insertCell(- 1); // -1 is insert as last
-                        if (new Date(Date.now() - (1000 * 60 * 15)) > time) {
+                        const time = weather_array[i]['time'];
+                        const date15Minutes =new Date(Date.now() - (1000 * 60 * 15));
+                        if (date15Minutes > time) {
                             cell.className = 'Time red'; //
                         } else {
                             cell.className = 'Time'; //
@@ -314,7 +316,7 @@
             const year = dateTimeArray[2];
             const hour = dateTimeArray[3].split(':')[0];
             const minute = dateTimeArray[3].split(':')[1];
-            return new Date(year, month, day, hour, minute);
+            return new Date(year, month-1, day, hour, minute, 0, 0);
         }
 
         function generateMonth(monthString) {
