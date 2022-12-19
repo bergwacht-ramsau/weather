@@ -552,14 +552,14 @@
                         aspectContainer.className = "aspect";
                         for (let j = 0; j < problemsAndAspects[i].validAspects.length; j++) {
                             const aspect = document.createElement("img");
-                            aspect.src = "https://lawinen.report/images/pro/expositions/exposition_" + problemsAndAspects[i].validAspects[j].toLowerCase() + ".png";
+                            aspect.src = "resources/exposition_" + problemsAndAspects[i].validAspects[j].toLowerCase() + ".png";
                             aspect.width = 100;
                             aspect.alt = problemsAndAspects[i].validAspects[j];
                             aspect.className = "aspect-img"
                             aspectContainer.appendChild(aspect);
                         }
                         const rose = document.createElement("img");
-                        rose.src = "https://lawinen.report/images/pro/expositions/exposition_bg.png";
+                        rose.src = "resources/exposition_bg.png";
                         rose.width = 100;
                         rose.alt = problemsAndAspects[i].validAspects.toString();
                         rose.className = "aspect-img"
