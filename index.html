@@ -116,6 +116,34 @@
         .sa:hover {
             cursor: pointer;
         }
+
+        .aspect-img {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        .aspect {
+            float: right;
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .type {
+            float: left;
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .type-aspect {
+            width: 250px;
+            height: 100px;
+            padding: 0px 50px;
+            margin: 0.5em 0em;
+        }
     </style>
 </head>
 
@@ -175,7 +203,7 @@
                         cell.innerHTML = weather_array[i]['height'];
                         cell = row.insertCell(- 1); // -1 is insert as last
                         const time = weather_array[i]['time'];
-                        const date15Minutes =new Date(Date.now() - (1000 * 60 * 15));
+                        const date15Minutes = new Date(Date.now() - (1000 * 60 * 15));
                         if (date15Minutes > time) {
                             cell.className = 'Time red'; //
                         } else {
@@ -316,23 +344,23 @@
             const year = dateTimeArray[2];
             const hour = dateTimeArray[3].split(':')[0];
             const minute = dateTimeArray[3].split(':')[1];
-            return new Date(year, month-1, day, hour, minute, 0, 0);
+            return new Date(year, month, day, hour, minute, 0, 0);
         }
 
         function generateMonth(monthString) {
             switch (monthString) {
-                case 'Jan': return 1;
-                case 'Feb': return 2;
-                case 'Mär': return 3;
-                case 'Apr': return 4;
-                case 'Mai': return 5;
-                case 'Jun': return 6;
-                case 'Jul': return 7;
-                case 'Aug': return 8;
-                case 'Sep': return 9;
-                case 'Okt': return 10;
-                case 'Nov': return 11;
-                case 'Dez': return 12;
+                case 'Jan': return 0;
+                case 'Feb': return 1;
+                case 'Mär': return 2;
+                case 'Apr': return 3;
+                case 'Mai': return 4;
+                case 'Jun': return 5;
+                case 'Jul': return 6;
+                case 'Aug': return 7;
+                case 'Sep': return 8;
+                case 'Okt': return 9;
+                case 'Nov': return 10;
+                case 'Dez': return 11;
             }
         }
 
@@ -436,13 +464,15 @@
                     const date = getWarningDate(warning);
                     const ratings = warning.getElementsByTagName('DangerRating');
                     const ratingsAndHeight = getRatingsAndHeight(ratings);
+                    const problems = warning.getElementsByTagName('AvProblem');
+                    const problemsAndAspects = getProblemsAndAspects(problems);
                     if (ratingsAndHeight.length === 0) {
                         return;
                     }
+                    const element = document.getElementById(elementId);
                     if (ratingsAndHeight.length === 1) {
                         const container = document.getElementById('avalanche');
                         container.className = "avalanche";
-                        const element = document.getElementById(elementId);
                         let header = document.createElement("p");
                         header.appendChild(document.createTextNode(name));
                         element.appendChild(header);
@@ -461,7 +491,6 @@
                     } else {
                         const container = document.getElementById('avalanche');
                         container.className = "avalanche";
-                        const element = document.getElementById(elementId);
                         let header = document.createElement("p");
                         header.appendChild(document.createTextNode(name));
                         element.appendChild(header);
@@ -507,6 +536,36 @@
                             para.appendChild(document.createTextNode(date));
                             element.appendChild(para);
                         }
+                    }
+                    for (let i = 0; i < problemsAndAspects.length; i++) {
+                        const container = document.createElement("div");
+                        container.className = "type-aspect";
+                        const typeContainer = document.createElement("div");
+                        typeContainer.className = "type";
+                        const img = document.createElement("img");
+                        img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-problems/" + problemsAndAspects[i].type + ".svg";
+                        img.width = 100;
+                        img.alt = problemsAndAspects[i].type;
+                        typeContainer.appendChild(img)
+                        container.appendChild(typeContainer);
+                        const aspectContainer = document.createElement("div");
+                        aspectContainer.className = "aspect";
+                        for (let j = 0; j < problemsAndAspects[i].validAspects.length; j++) {
+                            const aspect = document.createElement("img");
+                            aspect.src = "https://lawinen.report/images/pro/expositions/exposition_" + problemsAndAspects[i].validAspects[j].toLowerCase() + ".png";
+                            aspect.width = 100;
+                            aspect.alt = problemsAndAspects[i].validAspects[j];
+                            aspect.className = "aspect-img"
+                            aspectContainer.appendChild(aspect);
+                        }
+                        const rose = document.createElement("img");
+                        rose.src = "https://lawinen.report/images/pro/expositions/exposition_bg.png";
+                        rose.width = 100;
+                        rose.alt = problemsAndAspects[i].validAspects.toString();
+                        rose.className = "aspect-img"
+                        aspectContainer.appendChild(rose);
+                        container.appendChild(aspectContainer);
+                        element.appendChild(container);
                     }
                 }).catch(function (error) {
                     console.log("Fehler: bei Auslesen der XML-Datei " + error);
@@ -607,6 +666,35 @@
                 temp.push({ end: end, elevation: elevation, level: ratings.item(i).getElementsByTagName('mainValue')[0].innerHTML });
             }
             return temp;
+        }
+
+        function getProblemsAndAspects(problems) {
+            let temp = [];
+            for (let i = 0; i < problems.length; i++) {
+                let end = null;
+                let begin = null;
+                if (problems.item(i).getElementsByTagName('endPosition').length > 0) {
+                    end = problems.item(i).getElementsByTagName('endPosition')[0].innerHTML;
+                }
+                if (problems.item(i).getElementsByTagName('beginPosition').length > 0) {
+                    begin = problems.item(i).getElementsByTagName('beginPosition')[0].innerHTML;
+                }
+                let validAspects = [];
+                for (let j = 0; j < problems.item(i).getElementsByTagName('validAspect').length; j++) {
+                    validAspects.push(problems.item(i).getElementsByTagName('validAspect')[j].attributes['xlink:href']['value'].split("Range_")[1]);
+                }
+                const type = getProblemType(problems.item(i).getElementsByTagName('type')[0].innerHTML);
+                temp.push({ begin: begin, end: end, validAspects: validAspects, type: type });
+            }
+            return temp;
+        }
+
+        function getProblemType(typeString) {
+            let type = typeString.replace(' ', '-');
+            if (type === 'drifting-snow') {
+                type = 'wind-drifted-snow';
+            }
+            return type;
         }
     </script>
 </body>
