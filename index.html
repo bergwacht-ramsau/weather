@@ -543,7 +543,7 @@
                         const typeContainer = document.createElement("div");
                         typeContainer.className = "type";
                         const img = document.createElement("img");
-                        img.src = "https://www.avalanche-warnings.eu/images/common/avalanche-problems/" + problemsAndAspects[i].type + ".svg";
+                        img.src = "resources/" + problemsAndAspects[i].type + ".png";
                         img.width = 100;
                         img.alt = problemsAndAspects[i].type;
                         typeContainer.appendChild(img)
@@ -690,13 +690,7 @@
         }
 
         function getProblemType(typeString) {
-            let type = typeString.replace(' ', '-');
-            if (type === 'drifting-snow') {
-                type = 'wind-drifted-snow';
-            }
-            if (type === 'old-snow') {
-                type = 'persistant-weak-layer';
-            }
+            let type = typeString.replace(' ', '_');
             return type;
         }
     </script>
